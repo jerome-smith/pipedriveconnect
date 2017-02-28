@@ -1,0 +1,9 @@
+{
+  "_comment"       : "see proxy.js for comments about the server ports below",
+  "apiHost"        : "fedevs.dev.tagcmd.com",
+  "api"            : 80,
+  "proxySvr1"      : 8001,
+  "proxySvr2"      : 7999,
+  "fixSvr1"        : 8000,
+  "fixSvr3"        : 8002
+}

@@ -1,0 +1,15 @@
+{
+  "name": "sqlnodejs",
+  "version": "1.0.0",
+  "description": "connect to rest api using nodejs and update sql db",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jerome Smith",
+  "license": "MIT",
+  "devDependencies": {
+    "node-rest-client": "^2.5.0",
+    "tedious": "^1.14.0"
+  }
+}
