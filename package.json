@@ -4,12 +4,30 @@
   "description": "connect to rest api using nodejs and update sql db",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "author": "Jerome Smith",
   "license": "MIT",
   "devDependencies": {
     "node-rest-client": "^2.5.0",
     "tedious": "^1.14.0"
-  }
+  },
+  "dependencies": {
+    "mssql": "^3.3.0",
+    "node-mssql": "^0.0.1",
+    "tedious": "^1.14.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jerome-smith/pipedriveconnect.git"
+  },
+  "keywords": [
+    "nodejs",
+    "mssql"
+  ],
+  "bugs": {
+    "url": "https://github.com/jerome-smith/pipedriveconnect/issues"
+  },
+  "homepage": "https://github.com/jerome-smith/pipedriveconnect#readme"
 }
