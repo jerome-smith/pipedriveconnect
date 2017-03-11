@@ -56,16 +56,14 @@ var client = new Client();
   });
 };
 // db connection
-var connect = function () {
-    var connection = new Connection(config);
-    connection.on('connect', function(err) {
-    // If no error, then good to proceed.
-        console.log("Connected");
-        executeStatementCheck();
-    });
-    return connection;
-}
 
+var connection = new Connection(config);
+connection.on('connect', function(err) {
+// If no error, then good to proceed.
+    console.log("Connected");
+    executeStatementCheck();
+});
+console.log('mtv',connection);
 // INSERT  Cherwell_Dev.pipedrivetemp (title,value,currency,add_time,update_time,stage_change_time,active,deleted,status)
 // VALUES (@title,@value,@currency,@add_time,@update_time,@stage_change_time,@active,@deleted,@status);
 // get the existing ids from the temp table before inserting them again
@@ -81,7 +79,7 @@ function executeStatementCheck() {
       retweet(rows);
     }
   });
-  connect().connection.execSql(request);
+  connection.execSql(request);
 
   request.on('row', function(columns) {
     var requestInsertUpdate = new Request(sqlUpdateInsert, function(err){
@@ -89,7 +87,7 @@ function executeStatementCheck() {
         console.log(err);
       }
     });
-     connect().connection.execSql(requestInsertUpdate);
+    connection.execSql(requestInsertUpdate);
   });
 }
 
