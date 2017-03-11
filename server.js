@@ -7,7 +7,7 @@ var config = {
     password: 'Superman21',
     server: '41.77.101.146',
     // If you are on Microsoft Azure, you need this:
-    options: {encrypt: true, database: 'TempPipeDriveData'}
+    options: {database: 'TempPipeDriveData'}
 };
 var dataStatements = [], dataIds = [];
 
@@ -28,7 +28,7 @@ var client = new Client();
         // bit volatile here the two arrays may become out of sync
         for (var i = 0; i < data.length; i++) {
           if (dataIds[i] === data[i].stage_id) {
-            cols = 'update pipedrivetemp'
+            cols = 'update TempPipeDriveData'
             vals = ' set title ='+data.title+',value='+
             data.value+',currency='+
             data.currency+',add_time='+
@@ -38,7 +38,7 @@ var client = new Client();
             data.update_time+',pipeline_id='+
             data.pipeline_id+',active='+data.active+',deleted='+data.deleted+',status='+data.status+')'
           } else {
-            cols = 'INSERT into pipedrivetemp (stage_id,title,value,formatted_value,weighted_value,currency,add_time,update_time,active,deleted,status,products_count,pipeline_id,followers_count)';
+            cols = 'INSERT into TempPipeDriveData (stage_id,title,value,formatted_value,weighted_value,currency,add_time,update_time,active,deleted,status,products_count,pipeline_id,followers_count)';
             vals = 'Values ('+data.stage_id+','+
             data.title+','+
             data.value+','+
@@ -59,16 +59,23 @@ var client = new Client();
 
 var connection = new Connection(config);
 connection.on('connect', function(err) {
-// If no error, then good to proceed.
-    console.log("Connected");
-    executeStatementCheck();
+  if(err) {
+      console.log("Database connection is not established: \n"+err);
+      process.exit(0);
+  } else {
+      console.log("Connected");  // If no error, then good to proceed.
+      executeStatementCheck();
+  }
 });
-console.log('mtv',connection);
+connection.on('debug', function(text) {
+  console.log(text);
+});
 // INSERT  Cherwell_Dev.pipedrivetemp (title,value,currency,add_time,update_time,stage_change_time,active,deleted,status)
 // VALUES (@title,@value,@currency,@add_time,@update_time,@stage_change_time,@active,@deleted,@status);
 // get the existing ids from the temp table before inserting them again
 function executeStatementCheck() {
-  var sql = 'select stage_id from pipedrivetemp';
+  var sql = 'select stage_id from TempPipeDriveData';
+
   var request = new Request(sql, function(err, rowCount, rows) {
 
     if (err) {
@@ -79,7 +86,6 @@ function executeStatementCheck() {
       retweet(rows);
     }
   });
-  connection.execSql(request);
 
   request.on('row', function(columns) {
     var requestInsertUpdate = new Request(sqlUpdateInsert, function(err){
@@ -89,7 +95,8 @@ function executeStatementCheck() {
     });
     connection.execSql(requestInsertUpdate);
   });
+  connection.execSql(request);
 }
 
-setInterval(connect,2000);
+//setInterval(connection,2000);
 // add a timer that will run very n minutes until we have hooks sorted.
