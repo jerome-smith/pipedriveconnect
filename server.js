@@ -13,6 +13,8 @@ var dataStatements = [], dataIds = [];
 
 var retweet = function(rows) {
 var client = new Client();
+var connection = new Connection(config);
+
   var api_token="57b74e6b339618a479a77d5e8c722f384a4c9887";
   //https://api.pipedrive.com/v1/deals?start=0&api_token=57b74e6b339618a479a77d5e8c722f384a4c9887
 
@@ -57,10 +59,10 @@ var client = new Client();
 };
 // db connection
 
-var connection = new Connection(config);
-connection.on('connect', function(err) {
-  if(err) {
-      console.log("Database connection is not established: \n"+err);
+
+connection.on('connect', function(err, a, b) {
+  if (err) {
+      console.log("Database connection is not established: \n"+err, a);
       process.exit(0);
   } else {
       console.log("Connected");  // If no error, then good to proceed.
