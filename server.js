@@ -63,6 +63,7 @@ var connect = function () {
         console.log("Connected");
         executeStatementCheck();
     });
+    return connection;
 }
 
 // INSERT  Cherwell_Dev.pipedrivetemp (title,value,currency,add_time,update_time,stage_change_time,active,deleted,status)
@@ -80,7 +81,7 @@ function executeStatementCheck() {
       retweet(rows);
     }
   });
-  connection.execSql(request);
+  connect().connection.execSql(request);
 
   request.on('row', function(columns) {
     var requestInsertUpdate = new Request(sqlUpdateInsert, function(err){
@@ -88,7 +89,7 @@ function executeStatementCheck() {
         console.log(err);
       }
     });
-     connection.execSql(requestInsertUpdate);
+     connect().connection.execSql(requestInsertUpdate);
   });
 }
 
