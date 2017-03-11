@@ -3,11 +3,11 @@ var Connection = require('tedious').Connection;
 var Request = require('tedious').Request;
 var TYPES = require('tedious').TYPES;
 var config = {
-    userName: 'Cherwell_Dev',
-    password: 'jdN6Df7c',
-    server: '10.10.1.115',
+    userName: 'Cherwell_dev',
+    password: 'Superman21',
+    server: '41.77.101.146',
     // If you are on Microsoft Azure, you need this:
-    options: {encrypt: true, database: 'Cherwell_Dev'}
+    options: {encrypt: true, database: 'TempPipeDriveData'}
 };
 var dataStatements = [], dataIds = [];
 
@@ -19,7 +19,7 @@ var client = new Client();
   // set up the cononection params for the SQl server.
   // registering remote methods
   client.registerMethod("jsonMethod", "https://api.pipedrive.com/v1/deals?start=0&api_token="+api_token, "GET");
-
+  // prep the statement
   client.methods.jsonMethod(function (data, response) {
     var cols, vals;
       // parsed response body as js object
@@ -33,20 +33,25 @@ var client = new Client();
             data.value+',currency='+
             data.currency+',add_time='+
             data.add_time+',update_time='+
-            data.update_time+',stage_change_time='+
-            data.stage_change_time+',active='+data.active+',deleted='+data.deleted+',status='+data.status+')'
+            data.followers_count+',followers_count='+
+            data.products_count+',products_count='+
+            data.update_time+',pipeline_id='+
+            data.pipeline_id+',active='+data.active+',deleted='+data.deleted+',status='+data.status+')'
           } else {
-            cols = 'INSERT into pipedrivetemp (title,value,currency,add_time,update_time,stage_change_time,active,deleted,status)';
+            cols = 'INSERT into pipedrivetemp (stage_id,title,value,formatted_value,weighted_value,currency,add_time,update_time,active,deleted,status,products_count,pipeline_id,followers_count)';
             vals = 'Values ('+data.stage_id+','+
             data.title+','+
             data.value+','+
+            data.formatted_value+','+
             data.currency+','+
             data.add_time+','+
             data.update_time+','+
-            data.stage_change_time+','+data.active+','+data.deleted+','+data.status+')';
+            data.active+','+data.deleted+','+data.status+
+            ','+data.products_count+','+data.pipeline_id+','+followers_count+')';
           }
           dataStatements.push(cols+vals);
         }
+        return dataStatements;
       }
   });
 };
@@ -75,35 +80,17 @@ function executeStatementCheck() {
       retweet(rows);
     }
   });
-}
-function executeStatement1() {
-  var sql = 'INSERT pipedrivetemp (title,value,currency,add_time,update_time,stage_change_time,active,deleted,status)  SELECT col, col2   FROM tbl_B WHERE NOT EXISTS (SELECT col FROM tbl_A A2 WHERE A2.col = tbl_B.col)';
-  var request = new Request("INSERT Cherwell_Dev.pipedrivetemp (title,value,currency,add_time,update_time,stage_change_time,active,deleted,status) OUTPUT INSERTED.stage_id VALUES (@title,@value,@currency,@add_time,@update_time,@stage_change_time,@active,@deleted,@status);", function(err) {
-   if (err) {
-      console.log(err);}
-  });
-
-  request.addParameter('stage_id', TYPES.int,11);
-  request.addParameter('title', TYPES.Varchar);
-  request.addParameter('value', TYPES.Varchar);
-  request.addParameter('currency', TYPES.Varchar);
-  request.addParameter('add_time', TYPES.datetime);
-  request.addParameter('update_time', TYPES.datetime);
-  request.addParameter('stage_change_time', TYPES.datetime);
-  request.addParameter('active', TYPES.bit);
-  request.addParameter('deleted', TYPES.bit);
-  request.addParameter('status', TYPES.Varchar);
+  connection.execSql(request);
 
   request.on('row', function(columns) {
-      columns.forEach(function(column) {
-        if (column.value === null) {
-          console.log('NULL');
-        } else {
-          console.log(" stage_id of inserted item is " + column.value);
-        }
-      });
+    var requestInsertUpdate = new Request(sqlUpdateInsert, function(err){
+      if (err) {
+        console.log(err);
+      }
+    });
+     connection.execSql(requestInsertUpdate);
   });
-  connection.execSql(request);
 }
+
 setInterval(connect,2000);
 // add a timer that will run very n minutes until we have hooks sorted.
