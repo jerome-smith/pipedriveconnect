@@ -8,11 +8,11 @@ var app = express();
 
 app.get('/myfatfoot', function (req, res) {
   res.send('Hello World!')
-})
+});
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!')
-})
+});
 
 var config = {
     userName:"Cherwell_dev",
@@ -74,9 +74,10 @@ var retweet = function() {
   client.registerMethod("jsonMethod", "https://api.pipedrive.com/v1/deals?start=0&api_token="+api_token, "GET");
   // prep the statement
   client.methods.jsonMethod(function (data, response) {
+
     var cols, vals, dateTime = new Date(), uids;
     //console.log(response);
-    data = data.data;
+    data = data && data.data || [];
       // parsed response body as js object
 
       if (data.length) {
@@ -126,6 +127,9 @@ var retweet = function() {
           // dataStatements.push(cols+vals);
         }
         connection.execBulkLoad(bulk);
+      }
+      else {
+        connection.close();
       }
   });
 };
