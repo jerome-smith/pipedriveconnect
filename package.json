@@ -10,7 +10,10 @@
   "author": "Jerome Smith",
   "license": "MIT",
   "devDependencies": {
+    "express": "^4.15.2",
+    "jQuery": "^1.7.4",
     "node-rest-client": "^2.5.0",
+    "node-uuid": "^1.4.7",
     "tedious": "^1.14.0"
   },
   "dependencies": {
