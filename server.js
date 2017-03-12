@@ -7,14 +7,21 @@ var uid = require('node-uuid');
 var app = express();
 
 app.post('/cherwell/deals', function (req, res) {
-  res.send('Hello World!',req);
-  res.send('Response', resp);
+respondJson(req,res,{});
 });
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
 });
 
+var respondJson  = function (req, res, json) {
+  'use strict';
+  if (req && res) {
+    console.log("RESPONSE MOCK: JSON: ".green, req.method + ": " + req.url);
+    res.json(json);
+    res.end();
+  }
+};
 var config = {
   userName:"Cherwell_dev",
   password:"Superman21",
