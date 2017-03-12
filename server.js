@@ -6,19 +6,20 @@ var express = require('express');
 var uid = require('node-uuid');
 var app = express();
 
-app.get('/myfatfoot', function (req, res) {
-  res.send('Hello World!')
+app.post('/cherwell/deals', function (req, res) {
+  res.send('Hello World!',req);
+  res.send('Response', resp);
 });
 
 app.listen(3000, function () {
-  console.log('Example app listening on port 3000!')
+  console.log('Example app listening on port 3000!');
 });
 
 var config = {
-    userName:"Cherwell_dev",
-    password:"Superman21",
-    server:"41.77.101.146",
-    options: {database: 'Cherwell_DEV'},
+  userName:"Cherwell_dev",
+  password:"Superman21",
+  server:"41.77.101.146",
+  options: {database: 'Cherwell_DEV'}
 };
 var dataStatements = [], dataIds = [];
 // db connection
