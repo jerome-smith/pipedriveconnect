@@ -28,7 +28,7 @@ var openConnection = function () {
 var doUpdate = function (response) {
   var a  = response.data.current;
   var updateSqlString = "UPDATE [dbo].[StagingPipeDrive] SET [LastModDateTime] = '+a.update_time+',[LastModByID] = '+a.creator_user_id+',[OwnedBy] = '+a.person_name+',[OwnedByID] = '+a.user_id+',[OwnedByTeam] = '+a.org_name+',[Status] = '+a.status+',[ID] = '+a.id+',[Stage_ID] = '+a.stage_id+',[Title] = '+a.title+',[Value] = '+a.value+',[Currency] = '+a.currency+',[Add_Time] = '+a.stage_change_time+',[Update_Time] = '+a.update_time+',[Active] = '+a.active+',[Deleted] = '+a.deleted+',[Next_Activity_Date] = '+a.next_activity_date+',[Next_Activity_ID] = '+a.next_activity_id+',[Visible_To] = '+a.visible_to+',[PipeLine_ID] = '+a.pipeline_id+',[Product_Count] = '+a.products_count+',[File_Count] = '+a.files_count+',[Notes_Count] = '+a.notes_count+',[Followers_Count] = '+a.followers_count+',[Email_Messages_Count] = '+a.email_messages_count+',[Activities_Count] = '+a.activities_Count+',[Undone_Activities] = '+a.undone_Activities+',[Reference_Activities] = '+a.reference_activities_count+',[Participants_Count] = '+a.participants_count+',[Expected_Close_Date] = '+a.expected_close_date+',[Stage_Order_Number] = '+a.stage_order_nr+',[Person_Name] = '+a.person_name+',[Org_Name] = '+a.org_name+',[Next_Activity_Subject] = '+a.next_activity_subject+',[Next_Activity_Type] = '+a.next_activity_type+',[Next_Activity_Note] = '+a.next_activity_note+',[Formatted_Value] = '+a.formatted_value+',[Weighted_Value] = '+a.weighted_value+',[Formatted_Weighted_Value] = '+a.formatted_weighted_value+',[Owner_Name] = '+a.owner_name+',[CC_EMail_Address] = '+a.cc_email+',[Org_Hidden] = '+a.org_hidden+',[Person_Hidden] ='+a.person_hidden WHERE  Stage_ID = '+a.stage_id";
-  var connect = openConnection(), connect = {};
+  var connect = new Connection(config), connect = {};
 
   var request = new Request(updateSqlString, function(err, rowCount, rows) {
     if (err) {
@@ -40,7 +40,7 @@ var doUpdate = function (response) {
 };
 
 var doInsert = function (response) {
-  var openConnection = openConnection(), connect = {};
+  var openConnection = new Connection(config), connect = {};
   connect.open_connection = openConnection;
   var bulk = openConnection.newBulkLoad('StagingPipeDrive', function (error, rowCount) {
     if (rowCount) {
@@ -95,7 +95,7 @@ var doInsert = function (response) {
       process.exit(0);
     } else {
       console.log("Connected",response);  // If no error, then good to proceed.
-      sqlUpdateFunc(response);
+      sqlUpdateFunc(response, bulk, openConnection);
     }
   });
   openConnection.on('debug', function(text) {
@@ -117,7 +117,7 @@ var getAllDeals = function(response) {
   client.methods.jsonMethod(sqlUpdateFunc);
 };
 
-var sqlUpdateFunc = function (data, response) {
+var sqlUpdateFunc = function (data, bulk, connection) {
   var cols, vals, dateTime = new Date(), uids;
   //console.log(response);
   data = data && data.data || [];
@@ -168,7 +168,7 @@ var closeConnection = function () {
 // then open connection and insert data
 //http://196.201.104.8:3001/v1/deals
 app.post('/v1/deals', bpjson, function (req, res) {
-  var current = req.body.current;
+  var current = req.body;
   var response = {data:current, checkId:current.stage_id};
   res.end(JSON.stringify(response));
   executeStatementCheck(response);
@@ -182,21 +182,41 @@ var server = app.listen(3001, function () {
 });
 
 var executeStatementCheck = function(a) {
-  var sql = 'select * from StagingPipeDrive where Stage_ID='+a.checkId;
+  // console.log(a.data[0].data)
+  // console.log('this is a',a.data[0].data.stage_id);
+  console.log('from pipefrive to me===>', a)
+  var m = new Connection(config);
+  var sql = 'select * from StagingPipeDrive where Stage_ID = '+a.data[0].current.stage_id;
   var request = new Request(sql, function(err, rowCount, rows) {
     if (err) {
       console.log(err);
     }
+    console.log(rowCount);
     if (rowCount == 0) {
+       console.log('where there')
       doInsert(a);
     }
     if (rowCount > 0) {
+      console.log('where')
       doUpdate(a);
     }
 
   });
-  openConnection().execSql(request);
-  openConnection.close();
+
+    m.on('connect', function(err) {
+    if (err) {
+      console.log("Database connection is not established: \n"+err);
+      process.exit(0);
+    } else {
+      console.log("Connected");  // If no error, then good to proceed.
+      m.execSql(request);
+    }
+  });
+  m.on('debug', function(text) {
+    console.log('debug',text);
+  });
+
+  //openConnection.close();
 };
 
 //setInterval(connection,2000);
