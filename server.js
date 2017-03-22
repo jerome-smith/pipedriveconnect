@@ -33,17 +33,22 @@ var doUpdate = function (response) {
 
   var updateSqlString = "UPDATE [StagingPipeDrive] SET Value = @value";
   updateSqlString += ", [Status] = @status";
-
+ updateSqlString += ", CreatedBy ='"+a.person_name+"'";
+ updateSqlString += ", CreatedByID ="+a.person_id;
  updateSqlString += ", [Currency]='"+a.currency+"'";
- updateSqlString += ", Add_Time=@stage_change_time";
+ updateSqlString += ", Add_Time = @stage_change_time";
  updateSqlString += ", Update_Time = @update_time";
  updateSqlString += ", Active ='"+a.active+"'";
  updateSqlString += ", Deleted = '"+a.deleted+"'";
  updateSqlString += ", Next_Activity_Date ='"+a.next_activity_date+"'";
  updateSqlString += ", Next_Activity_ID = @next_activity_id";
+ updateSqlString += ", next_activity_note = @next_activity_note";
  updateSqlString += ", Visible_To = @visible_to";
  updateSqlString += ", PipeLine_ID = @pipeline_id";
  updateSqlString += ", Product_Count = @products_count, Title = @title";
+ updateSqlString += ", Participants_count = @participants_count";
+ updateSqlString += ", Org_Name = '"+a.org_name+"'";
+ updateSqlString += ", Org_Hidden = '"+a.org_hidden+"'";
  updateSqlString += ", File_Count = @files_count, Notes_Count = @notes_count, Followers_Count ="+a.followers_count;
  updateSqlString += ", Email_Messages_Count ="+a.email_messages_count+", Activities_Count ="+a.activities_count+", Undone_Activities = "+a.undone_activities_count;
  updateSqlString += " WHERE [Stage_ID] ="+a.stage_id+" AND ID ="+a.id;
