@@ -27,7 +27,8 @@ var openConnection = function () {
 };
 
 var doUpdate = function (response) {
-  var a  = response.data.current;
+  console.log(response);
+  var a  = response;
   //console.log('THIS DATA', a.stage_id);
 
   var updateSqlString = "UPDATE [StagingPipeDrive] SET Value = @value";
