@@ -196,7 +196,7 @@ var getAllDeals = function(response) {
 var sqlUpdateFunc = function (data, bulk, connection) {
   var cols, vals, dateTime = new Date(), uids;
   //console.log(response);
-  data = data && data.data || [data.current];
+  data = data && data.data || [data];
     // parsed response body as js object
 console.log(data);
     if (data.length) {
