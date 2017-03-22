@@ -139,7 +139,7 @@ var doInsert = function (response) {
     bulk.addColumn('Status', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('Value', TYPES.Int, { nullable: true });
     bulk.addColumn('ID', TYPES.Int, { nullable: true });
-    bulk.addColumn('Deleted', TYPES.VarChar, { nullable: true });
+    bulk.addColumn('Deleted', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('PipeLine_ID', TYPES.Int, { nullable: true });
     bulk.addColumn('Currency', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('Add_Time', TYPES.VarChar, { length: 50, nullable: true });
