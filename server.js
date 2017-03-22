@@ -27,7 +27,7 @@ var openConnection = function () {
 };
 
 var doUpdate = function (response) {
-  var a  = response.data[0].data || response.data.current;
+  var a  = response.data.current;
   //console.log('THIS DATA', a.stage_id);
 
   var updateSqlString = "UPDATE [StagingPipeDrive] SET Value = @value";
@@ -195,15 +195,14 @@ var getAllDeals = function(response) {
 var sqlUpdateFunc = function (data, bulk, connection) {
   var cols, vals, dateTime = new Date(), uids;
   //console.log(response);
-  data = data && data.data || [];
+  data = data && data.data || [data.current];
     // parsed response body as js object
-
+console.log(data);
     if (data.length) {
       // insert o
       // bit volatile here the two arrays may become out of sync
       for (var i = 0; i < data.length; i++) {
-        datas = data[i].data;
-        console.log('KKKKKKKK KKKKK',datas.stage_id);
+        datas = data[i]
         uids = uid.v4();
         bulk.addRow({RecID:uids,Title:datas.title,Status:datas.status,Value:datas.value,Deleted:datas.deleted,Pipeline_ID:datas.pipeline_id,Currency:datas.currency,Add_Time:datas.add_time,
         Update_Time:datas.update_time,
@@ -263,7 +262,7 @@ var executeStatementCheck = function(a) {
   // console.log(a.data[0].data)
   // console.log('this is a',a.data[0].data.stage_id);
   console.log('from pipefrive to me===>', a);
-  var id = a.data[0].data.stage_id;
+  var id = a.data.current.id;//a.data[0].data.stage_id;
   var m = new Connection(config);
   var sql = 'select * from StagingPipeDrive where Stage_ID = '+id;
   var request = new Request(sql, function(err, rowCount, rows) {
@@ -272,12 +271,11 @@ var executeStatementCheck = function(a) {
     }
     console.log('THERE ARE number of rows',rowCount);
     if (rowCount == 0) {
-       console.log('where there')
-      doInsert(a);
+      doInsert(a.data.current);
     }
     if (rowCount > 0) {
-      console.log('where')
-      doUpdate(a);
+      console.log('update performed');
+      doUpdate(a.data.current);
     }
 
   });
