@@ -160,7 +160,7 @@ var doInsert = function (response) {
     bulk.addColumn('Next_Activity_Note', TYPES.VarChar, { length: 50, nullable: true});
     bulk.addColumn('Next_Activity_Date', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('Next_Activity_ID', TYPES.VarChar, { length: 50, nullable: true });
-    bulk.addColumn('Visible_To', TYPES.VarChar, { length: 50, nullable: true });
+    bulk.addColumn('Visible_To', TYPES.Int, { nullable: true });
     bulk.addColumn('Product_Count', TYPES.Int, { nullable: true});
     bulk.addColumn('Notes_Count', TYPES.Int, { nullable: true});
     bulk.addColumn('Stage_ID', TYPES.Int, { nullable: true});
