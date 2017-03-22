@@ -7,9 +7,10 @@ var config = {
   userName:"Cherwell_dev",
   password:"Superman21",
   server:"41.77.101.146",
-  options: {database: 'Cherwell_DEV'}
+  options: {
+    database: 'Cherwell_DEV'
+  }
 };
-
 var express = require("express");
 var bp = require("body-parser");
 var app = express();
@@ -26,17 +27,90 @@ var openConnection = function () {
 };
 
 var doUpdate = function (response) {
-  var a  = response.data.current;
-  var updateSqlString = "UPDATE [dbo].[StagingPipeDrive] SET [LastModDateTime] = '+a.update_time+',[LastModByID] = '+a.creator_user_id+',[OwnedBy] = '+a.person_name+',[OwnedByID] = '+a.user_id+',[OwnedByTeam] = '+a.org_name+',[Status] = '+a.status+',[ID] = '+a.id+',[Stage_ID] = '+a.stage_id+',[Title] = '+a.title+',[Value] = '+a.value+',[Currency] = '+a.currency+',[Add_Time] = '+a.stage_change_time+',[Update_Time] = '+a.update_time+',[Active] = '+a.active+',[Deleted] = '+a.deleted+',[Next_Activity_Date] = '+a.next_activity_date+',[Next_Activity_ID] = '+a.next_activity_id+',[Visible_To] = '+a.visible_to+',[PipeLine_ID] = '+a.pipeline_id+',[Product_Count] = '+a.products_count+',[File_Count] = '+a.files_count+',[Notes_Count] = '+a.notes_count+',[Followers_Count] = '+a.followers_count+',[Email_Messages_Count] = '+a.email_messages_count+',[Activities_Count] = '+a.activities_Count+',[Undone_Activities] = '+a.undone_Activities+',[Reference_Activities] = '+a.reference_activities_count+',[Participants_Count] = '+a.participants_count+',[Expected_Close_Date] = '+a.expected_close_date+',[Stage_Order_Number] = '+a.stage_order_nr+',[Person_Name] = '+a.person_name+',[Org_Name] = '+a.org_name+',[Next_Activity_Subject] = '+a.next_activity_subject+',[Next_Activity_Type] = '+a.next_activity_type+',[Next_Activity_Note] = '+a.next_activity_note+',[Formatted_Value] = '+a.formatted_value+',[Weighted_Value] = '+a.weighted_value+',[Formatted_Weighted_Value] = '+a.formatted_weighted_value+',[Owner_Name] = '+a.owner_name+',[CC_EMail_Address] = '+a.cc_email+',[Org_Hidden] = '+a.org_hidden+',[Person_Hidden] ='+a.person_hidden WHERE  Stage_ID = '+a.stage_id";
-  var connect = new Connection(config), connect = {};
+  var a  = response.data[0].data || response.data.current;
+  //console.log('THIS DATA', a.stage_id);
 
-  var request = new Request(updateSqlString, function(err, rowCount, rows) {
+  var updateSqlString = "UPDATE [StagingPipeDrive] SET Value = @value";
+  updateSqlString += ", [Status] = @status";
+
+ updateSqlString += ", [Currency]='"+a.currency+"'";
+ updateSqlString += ", Add_Time=@stage_change_time";
+ updateSqlString += ", Update_Time = @update_time";
+ updateSqlString += ", Active ='"+a.active+"'";
+ updateSqlString += ", Deleted = '"+a.deleted+"'";
+ updateSqlString += ", Next_Activity_Date ='"+a.next_activity_date+"'";
+ updateSqlString += ", Next_Activity_ID = @next_activity_id";
+ updateSqlString += ", Visible_To = @visible_to";
+ updateSqlString += ", PipeLine_ID = @pipeline_id";
+ updateSqlString += ", Product_Count = @products_count, Title = @title";
+ updateSqlString += ", File_Count = @files_count, Notes_Count = @notes_count, Followers_Count ="+a.followers_count;
+ updateSqlString += ", Email_Messages_Count ="+a.email_messages_count+", Activities_Count ="+a.activities_count+", Undone_Activities = "+a.undone_activities_count;
+ updateSqlString += " WHERE [Stage_ID] ="+a.stage_id;
+//console.log('updateSqlString',updateSqlString);
+//[Org_Name] = "+a.org_name+",
+//Org_Hidden = "+a.org_hidden+"
+// Title="+a.title+ ",
+  var request = new Request(updateSqlString, function(err, rowCount) {
     if (err) {
       console.log(err);
+      connect.close();
     }
   });
-    connect.execSql(request);
-  connect.close();
+
+    request.addParameter('status', TYPES.VarChar, a.status);
+
+    request.addParameter('visible_to',TYPES.Int, a.visible_to);
+    request.addParameter('pipeline_id',TYPES.Int, a.pipeline_id);
+    request.addParameter('next_activity_id', TYPES.Int, a.next_activity_id);
+    request.addParameter('products_count',TYPES.Int, a.products_count);
+    request.addParameter('files_count', TYPES.Int, a.files_count);
+    request.addParameter('stage_order_nr', TYPES.Int, a.stage_order_nr);
+    request.addParameter('weighted_value', TYPES.Int, a.weighted_value);
+    request.addParameter('notes_count', TYPES.Int, a.notes_count);
+    request.addParameter('stage_change_time', TYPES.VarChar, a.stage_change_time);
+    request.addParameter('update_time', TYPES.VarChar, a.update_time);
+    request.addParameter('id', TYPES.Int, a.id);
+    request.addParameter('value', TYPES.Int, a.value);
+    request.addParameter('undone_activities', TYPES.Int, a.undone_activities_count);
+    request.addParameter('participants_count', TYPES.Int, a.participants_count);
+    request.addParameter('email_messages_count', TYPES.Int, a.email_messages_count);
+    request.addParameter('reference_activities_count', TYPES.Int, a.reference_activities_count);
+    request.addParameter('stage_id', TYPES.Int, a.stage_id);
+    request.addParameter('followers_count', TYPES.Int, a.followers_count);
+
+
+    request.addParameter('title', TYPES.VarChar, a.title);
+    request.addParameter('currency', TYPES.VarChar, a.currency);
+    request.addParameter('active', TYPES.VarChar, a.active);
+    request.addParameter('deleted', TYPES.VarChar, a.deleted);
+    request.addParameter('next_activity_date', TYPES.VarChar, a.next_activity_date);
+    request.addParameter('org_name', TYPES.VarChar, a.org_name);
+    request.addParameter('person_hidden', TYPES.VarChar, a.person_hidden);
+    request.addParameter('owner_name', TYPES.VarChar, a.owner_name);
+    request.addParameter('cc_email', TYPES.VarChar, a.cc_email);
+    request.addParameter('org_hidden', TYPES.VarChar, a.org_hidden);
+    request.addParameter('next_activity_type', TYPES.VarChar, a.next_activity_type);
+    request.addParameter('next_activity_note', TYPES.VarChar, a.next_activity_note);
+    request.addParameter('formatted_value', TYPES.VarChar, a.formatted_value);
+    request.addParameter('formatted_weighted_value', TYPES.VarChar, a.formatted_weighted_value);
+    request.addParameter('expected_close_date', TYPES.VarChar, a.expected_close_date);
+    request.addParameter('next_activity_subject', TYPES.VarChar, a.next_activity_subject);
+    request.addParameter('user_id', TYPES.VarChar, a.user_id);
+    request.addParameter('person_name', TYPES.VarChar, a.person_name);
+ var connect = new Connection(config);
+    connect.on('connect', function(err) {
+    if (err) {
+      console.log("Database connection is not established: \n"+err);
+      process.exit(0);
+    } else {
+      console.log("Connected");  // If no error, then good to proceed.
+      connect.execSql(request);
+    }
+  });
+  connect.on('debug', function(text) {
+    console.log('debug',text);
+  });
+
 };
 
 var doInsert = function (response) {
@@ -83,6 +157,7 @@ var doInsert = function (response) {
     bulk.addColumn('Visible_To', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('Product_Count', TYPES.Int, { nullable: true});
     bulk.addColumn('Notes_Count', TYPES.Int, { nullable: true});
+    bulk.addColumn('Stage_ID', TYPES.Int, { nullable: true});
     bulk.addColumn('Owner_name', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('CC_Email_Address', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('Org_Hidden', TYPES.VarChar, { length: 50, nullable: true });
@@ -124,33 +199,35 @@ var sqlUpdateFunc = function (data, bulk, connection) {
     // parsed response body as js object
 
     if (data.length) {
-      console.log('data JEROME data');
       // insert o
       // bit volatile here the two arrays may become out of sync
       for (var i = 0; i < data.length; i++) {
+        datas = data[i].data;
+        console.log('KKKKKKKK KKKKK',datas.stage_id);
         uids = uid.v4();
-        bulk.addRow({RecID:uids,Title:data[i].title,Status:data[i].status,Value:data[i].value,Deleted:data[i].deleted,Pipeline_ID:data[i].pipeline_id,Currency:data[i].currency,Add_Time:data[i].add_time,
-        Update_Time:data[i].update_time,
-        Expected_Close_Date:data[i].expected_close_date,
-        Person_Name:data[i].person_name,
-        Active:data[i].active,
-        Email_Messages_Count:data[i].email_messages_count,
-        Activities_Count:data[i].activities_count,
-        Undone_Activities:data[i].undone_activities_count,
-        Reference_Activities:data[i].reference_activities_count,
-        Org_Name:data[i].org_name,
-        Next_Activity_Subject:data[i].next_activity_subject,
-        Next_Activity_Note:data[i].next_activity_note,
-        Next_Activity_Date:data[i].next_activity_date,
-        Next_Activity_ID:data[i].next_activity_id,
-        Visible_To:data[i].visible_to,
-        Product_Count:data[i].products_count,
-        Notes_Count:data[i].notes_count,
-        Owner_name:data[i].owner_name,
-        CC_Email_Address:data[i].cc_email,
-        Org_Hidden:data[i].org_hidden,
-        Person_Hidden:data[i].person_hidden,
-        Followers_Count:data[i].followers_count,Weighted_Value:data[i].weighted_Value,Formatted_Value:data[i].formatted_value});
+        bulk.addRow({RecID:uids,Title:datas.title,Status:datas.status,Value:datas.value,Deleted:datas.deleted,Pipeline_ID:datas.pipeline_id,Currency:datas.currency,Add_Time:datas.add_time,
+        Update_Time:datas.update_time,
+        Stage_ID:datas.stage_id,
+        Expected_Close_Date:datas.expected_close_date,
+        Person_Name:datas.person_name,
+        Active:datas.active,
+        Email_Messages_Count:datas.email_messages_count,
+        Activities_Count:datas.activities_count,
+        Undone_Activities:datas.undone_activities_count,
+        Reference_Activities:datas.reference_activities_count,
+        Org_Name:datas.org_name,
+        Next_Activity_Subject:datas.next_activity_subject,
+        Next_Activity_Note:datas.next_activity_note,
+        Next_Activity_Date:datas.next_activity_date,
+        Next_Activity_ID:datas.next_activity_id,
+        Visible_To:datas.visible_to,
+        Product_Count:datas.products_count,
+        Notes_Count:datas.notes_count,
+        Owner_name:datas.owner_name,
+        CC_Email_Address:datas.cc_email,
+        Org_Hidden:datas.org_hidden,
+        Person_Hidden:datas.person_hidden,
+        Followers_Count:datas.followers_count,Weighted_Value:data[i].weighted_Value,Formatted_Value:data[i].formatted_value});
       }
       connection.execBulkLoad(bulk);
     }
@@ -169,6 +246,7 @@ var closeConnection = function () {
 //http://196.201.104.8:3001/v1/deals
 app.post('/v1/deals', bpjson, function (req, res) {
   var current = req.body;
+  console.log('current',current);
   var response = {data:current, checkId:current.stage_id};
   res.end(JSON.stringify(response));
   executeStatementCheck(response);
@@ -184,14 +262,15 @@ var server = app.listen(3001, function () {
 var executeStatementCheck = function(a) {
   // console.log(a.data[0].data)
   // console.log('this is a',a.data[0].data.stage_id);
-  console.log('from pipefrive to me===>', a)
+  console.log('from pipefrive to me===>', a);
+  var id = a.data[0].data.stage_id;
   var m = new Connection(config);
-  var sql = 'select * from StagingPipeDrive where Stage_ID = '+a.data[0].current.stage_id;
+  var sql = 'select * from StagingPipeDrive where Stage_ID = '+id;
   var request = new Request(sql, function(err, rowCount, rows) {
     if (err) {
       console.log(err);
     }
-    console.log(rowCount);
+    console.log('THERE ARE number of rows',rowCount);
     if (rowCount == 0) {
        console.log('where there')
       doInsert(a);
