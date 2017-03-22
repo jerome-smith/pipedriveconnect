@@ -46,7 +46,7 @@ var doUpdate = function (response) {
  updateSqlString += ", Product_Count = @products_count, Title = @title";
  updateSqlString += ", File_Count = @files_count, Notes_Count = @notes_count, Followers_Count ="+a.followers_count;
  updateSqlString += ", Email_Messages_Count ="+a.email_messages_count+", Activities_Count ="+a.activities_count+", Undone_Activities = "+a.undone_activities_count;
- updateSqlString += " WHERE [Stage_ID] ="+a.stage_id;
+ updateSqlString += " WHERE [Stage_ID] ="+a.stage_id+" AND ID ="+a.id;
 //console.log('updateSqlString',updateSqlString);
 //[Org_Name] = "+a.org_name+",
 //Org_Hidden = "+a.org_hidden+"
@@ -134,6 +134,7 @@ var doInsert = function (response) {
     bulk.addColumn('Title', TYPES.VarChar, { length: 50,nullable: true });
     bulk.addColumn('Status', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('Value', TYPES.Int, { nullable: true });
+    bulk.addColumn('ID', TYPES.Int, { nullable: true });
     bulk.addColumn('Deleted', TYPES.VarChar, { nullable: true });
     bulk.addColumn('PipeLine_ID', TYPES.Int, { nullable: true });
     bulk.addColumn('Currency', TYPES.VarChar, { length: 50, nullable: true });
@@ -177,7 +178,7 @@ var doInsert = function (response) {
   openConnection.on('debug', function(text) {
     console.log('debug',text);
   });
-return connect;
+return openConnection;
 };
 
 var getAllDeals = function(response) {
@@ -227,6 +228,7 @@ console.log(data);
         CC_Email_Address:datas.cc_email,
         Org_Hidden:datas.org_hidden,
         Person_Hidden:datas.person_hidden,
+        ID:datas.id,
         Followers_Count:datas.followers_count,Weighted_Value:data[i].weighted_Value,Formatted_Value:data[i].formatted_value});
       }
       connection.execBulkLoad(bulk);
@@ -265,7 +267,7 @@ var executeStatementCheck = function(a) {
   console.log('from pipefrive to me===>', a);
   var id = a.data.current.id;//a.data[0].data.stage_id;
   var m = new Connection(config);
-  var sql = 'select * from StagingPipeDrive where Stage_ID = '+id;
+  var sql = 'select * from StagingPipeDrive where Stage_ID ='+a.data.current.stage_id+' and ID = '+id;
   var request = new Request(sql, function(err, rowCount, rows) {
     if (err) {
       console.log(err);
