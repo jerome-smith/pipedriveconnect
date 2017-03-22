@@ -149,7 +149,7 @@ var doInsert = function (response) {
     bulk.addColumn('Weighted_Value', TYPES.Int, { nullable: true });
     bulk.addColumn('CreatedDateTime', TYPES.VarChar, { length:50, nullable: true });
     bulk.addColumn('Expected_Close_Date', TYPES.VarChar, {length: 50, nullable: true });
-    bulk.addColumn('Person_Name', TYPES.VarChar, { length:255, nullable: true });
+    bulk.addColumn('Person_Name', TYPES.VarChar, { length:50, nullable: true });
     bulk.addColumn('Active', TYPES.VarChar, { length:50, nullable: true });
     bulk.addColumn('Email_Messages_Count', TYPES.VarChar, { length:50, nullable: true});
     bulk.addColumn('Activities_Count', TYPES.Int, { nullable: true});
