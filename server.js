@@ -115,8 +115,8 @@ var doUpdate = function (response) {
 };
 
 var doInsert = function (response) {
-  var openConnection = new Connection(config), connect = {};
-  connect.open_connection = openConnection;
+  var openConnection = new Connection(config);
+
   var bulk = openConnection.newBulkLoad('StagingPipeDrive', function (error, rowCount) {
     if (rowCount) {
       console.log('inserted %d rows', rowCount);
@@ -124,7 +124,7 @@ var doInsert = function (response) {
     }
     if (error) {
       console.log('error message coming through', error);
-      connect.openConnection.close();
+      openConnection.close();
     }
 
   });
@@ -293,8 +293,6 @@ var executeStatementCheck = function(a) {
   m.on('debug', function(text) {
     console.log('debug',text);
   });
-
-  //openConnection.close();
 };
 
 //setInterval(connection,2000);
