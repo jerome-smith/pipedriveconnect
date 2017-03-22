@@ -48,6 +48,7 @@ var doUpdate = function (response) {
  updateSqlString += ", Product_Count = @products_count, Title = @title";
  updateSqlString += ", Participants_count = @participants_count";
  updateSqlString += ", Org_Name = '"+a.org_name+"'";
+ updateSqlString += ", Expected_Close_Date = '"+a.expected_close_date+"'";
  updateSqlString += ", Org_Hidden = '"+a.org_hidden+"'";
  updateSqlString += ", File_Count = @files_count, Notes_Count = @notes_count, Followers_Count ="+a.followers_count;
  updateSqlString += ", Email_Messages_Count ="+a.email_messages_count+", Activities_Count ="+a.activities_count+", Undone_Activities = "+a.undone_activities_count;
@@ -83,8 +84,6 @@ var doUpdate = function (response) {
     request.addParameter('reference_activities_count', TYPES.Int, a.reference_activities_count);
     request.addParameter('stage_id', TYPES.Int, a.stage_id);
     request.addParameter('followers_count', TYPES.Int, a.followers_count);
-
-
     request.addParameter('title', TYPES.VarChar, a.title);
     request.addParameter('currency', TYPES.VarChar, a.currency);
     request.addParameter('active', TYPES.VarChar, a.active);
