@@ -16,7 +16,9 @@ var bp = require("body-parser");
 var app = express();
 var bpurle= bp.urlencoded({ extended: false });
 var bpjson= bp.json();
-
+// live token
+var api_token="ec1117c1aa20956fba177bfb72bcd875a9da3dc1";
+var epGetAllDeals = "https://api.pipedrive.com/v1/deals?start=0&api_token="+api_token;
 
 
 
@@ -37,6 +39,14 @@ var doUpdate = function (response) {
  updateSqlString += ", CreatedByID ="+a.person_id;
  updateSqlString += ", [Currency]='"+a.currency+"'";
  updateSqlString += ", Add_Time = @stage_change_time";
+
+
+ updateSqlString += ", Address1 = @address1";
+ updateSqlString += ", Contact_Number = @contact_number";
+ updateSqlString += ", Description = @description";
+ updateSqlString += ", Wholesaler = @wholesaler";
+ updateSqlString += ", Sales_Person = @sales_person";
+
  updateSqlString += ", Update_Time = @update_time";
  updateSqlString += ", Active ='"+a.active+"'";
  updateSqlString += ", Deleted = '"+a.deleted+"'";
@@ -63,9 +73,16 @@ var doUpdate = function (response) {
       connect.close();
     }
   });
-
+   request.addParameter('address1', TYPES.VarChar, a['b78fc4cc8254f2db228253846cd30fd23a3dac4d']);
+    // request.addParameter('address2', TYPES.VarChar, a[]);
+    // request.addParameter('address3', TYPES.VarChar, a[]);
+    request.addParameter('contact_number', TYPES.VarChar, a['933f1418de6c5152026acc29ecb20ccb9c58c1de']);
+    request.addParameter('description', TYPES.VarChar, a['0f7e1c54bc74746c8915352223edc1031879bdad']);
+    // LEAD Source
+    request.addParameter('wholesaler', TYPES.VarChar, a['42e175da98816fb62ec4ed003dac7a0083c7ecf9']);
+    // logged in person
+    request.addParameter('sales_person', TYPES.VarChar, a.person_name);
     request.addParameter('status', TYPES.VarChar, a.status);
-
     request.addParameter('visible_to',TYPES.Int, a.visible_to);
     request.addParameter('pipeline_id',TYPES.Int, a.pipeline_id);
     request.addParameter('next_activity_id', TYPES.Int, a.next_activity_id);
@@ -132,10 +149,16 @@ var doInsert = function (response) {
     }
 
   });
-  // setup your columns - always indicate whether the column is nullable
+    // setup your columns - always indicate whether the column is nullable
 
     bulk.addColumn('RecID', TYPES.VarChar, { length: 42,nullable: false });
     bulk.addColumn('Title', TYPES.VarChar, { length: 50,nullable: true });
+    //
+    bulk.addColumn('Contact_Number', TYPES.VarChar, { length:255, nullable:true});
+    bulk.addColumn('Address1', TYPES.VarChar, { length:255, nullable:true});
+    bulk.addColumn('Description', TYPES.VarChar, { length:255, nullable:true});
+    bulk.addColumn('Wholesaler', TYPES.VarChar, { length:255, nullable:true});
+    bulk.addColumn('Sales_Person', TYPES.VarChar, { length:255, nullable:true});
     bulk.addColumn('Status', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('Value', TYPES.Int, { nullable: true });
     bulk.addColumn('ID', TYPES.Int, { nullable: true });
@@ -185,17 +208,25 @@ var doInsert = function (response) {
 return openConnection;
 };
 
-var getAllDeals = function(response) {
+var getAllDeals = function() {
   var client = new Client();
   var api_token="57b74e6b339618a479a77d5e8c722f384a4c9887";
-  //https://api.pipedrive.com/v1/deals?start=0&api_token=57b74e6b339618a479a77d5e8c722f384a4c9887
 
   // set up the cononection params for the SQl server.
   // registering remote methods
   // go get this record  the first tme or anytime tweet is called
-  client.registerMethod("jsonMethod", "https://api.pipedrive.com/v1/deals?start=0&api_token="+api_token, "GET");
+  client.registerMethod("jsonMethod", epGetAllDeals, "GET");
   // prep the statement
   client.methods.jsonMethod(sqlUpdateFunc);
+};
+var displayAllDeals = function() {
+  var client = new Client();
+  // set up the cononection params for the SQl server.
+  // registering remote methods
+  // go get this record  the first tme or anytime tweet is called
+  client.get(epGetAllDeals, function(data, response) {
+    console.log('data', data.data[0]['933f1418de6c5152026acc29ecb20ccb9c58c1de']);
+  });
 };
 
 var sqlUpdateFunc = function (data, bulk, connection) {
@@ -216,6 +247,13 @@ console.log(data);
         Expected_Close_Date:datas.expected_close_date,
         Person_Name:datas.person_name,
         Active:datas.active,
+        Contact_Number : datas['933f1418de6c5152026acc29ecb20ccb9c58c1de'],
+        Address1: datas['b78fc4cc8254f2db228253846cd30fd23a3dac4d'];
+        Contact_Number: datas['933f1418de6c5152026acc29ecb20ccb9c58c1de'];
+        Description: datas['0f7e1c54bc74746c8915352223edc1031879bdad'];
+        // LEAD Source
+        Wholesaler: datas['42e175da98816fb62ec4ed003dac7a0083c7ecf9'];
+        // logged in person
         Email_Messages_Count:datas.email_messages_count,
         Activities_Count:datas.activities_count,
         Undone_Activities:datas.undone_activities_count,
@@ -300,6 +338,6 @@ var executeStatementCheck = function(a) {
     console.log('debug',text);
   });
 };
-
-//setInterval(connection,2000);
+// displayAllDeals();
+// setInterval(connection,2000);
 // add a timer that will run very n minutes until we have hooks sorted.
