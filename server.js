@@ -216,12 +216,7 @@ var displayAllDeals = function() {
   // registering remote methods
   // go get this record  the first tme or anytime tweet is called
   client.get(epGetAllDeals, function(data, res) {
-  var current = data.data;
-  //console.log('datassssxxxxx', current['933f1418de6c5152026acc29ecb20ccb9c58c1de']);
-
-  //console.log('currentxxxxxx',current.stage_id);
-  //current.checkId = current.stage_id;
-console.log(current.length);
+    var current = data.data;
     for (var i = 0; i < current.length; i++) {
       executeStatementCheck(current[i]);
     }
@@ -308,6 +303,7 @@ var executeStatementCheck = function(a) {
   console.log('from pipefrive to me===>',a);
   var id = a.id;//a.data[0].data.stage_id;
   var m = new Connection(config);
+  // checks each record if it exists if it does then insert else update the record
   var sql = 'select * from StagingPipeDrive where Stage_ID ='+a.stage_id+' and ID = '+id;
   var request = new Request(sql, function(err, rowCount, rows) {
     if (err) {
@@ -321,9 +317,7 @@ var executeStatementCheck = function(a) {
       console.log('update performed');
       doUpdate(a);
     }
-
   });
-
     m.on('connect', function(err) {
     if (err) {
       console.log("Database connection is not established: \n"+err);
@@ -338,5 +332,5 @@ var executeStatementCheck = function(a) {
   });
 };
 // displayAllDeals();
-// setInterval(connection,2000);
+setInterval(displayAllDeals,200000);
 // add a timer that will run very n minutes until we have hooks sorted.
