@@ -29,7 +29,6 @@ var openConnection = function () {
 };
 
 var doUpdate = function (response) {
-  console.log(response);
   var a  = response;
   //console.log('THIS DATA', a.stage_id);
 
@@ -39,14 +38,11 @@ var doUpdate = function (response) {
  updateSqlString += ", CreatedByID ="+a.person_id;
  updateSqlString += ", [Currency]='"+a.currency+"'";
  updateSqlString += ", Add_Time = @stage_change_time";
-
-
  updateSqlString += ", Address1 = @address1";
  updateSqlString += ", Contact_Number = @contact_number";
  updateSqlString += ", Description = @description";
  updateSqlString += ", Wholesaler = @wholesaler";
- updateSqlString += ", Sales_Person = @sales_person";
-
+ updateSqlString += ", Sales_Person ='"+a.owner_name+"'";
  updateSqlString += ", Update_Time = @update_time";
  updateSqlString += ", Active ='"+a.active+"'";
  updateSqlString += ", Deleted = '"+a.deleted+"'";
@@ -73,15 +69,13 @@ var doUpdate = function (response) {
       connect.close();
     }
   });
-   request.addParameter('address1', TYPES.VarChar, a['b78fc4cc8254f2db228253846cd30fd23a3dac4d']);
-    // request.addParameter('address2', TYPES.VarChar, a[]);
-    // request.addParameter('address3', TYPES.VarChar, a[]);
+    request.addParameter('address1', TYPES.VarChar, a['b78fc4cc8254f2db228253846cd30fd23a3dac4d']);
     request.addParameter('contact_number', TYPES.VarChar, a['933f1418de6c5152026acc29ecb20ccb9c58c1de']);
     request.addParameter('description', TYPES.VarChar, a['0f7e1c54bc74746c8915352223edc1031879bdad']);
     // LEAD Source
     request.addParameter('wholesaler', TYPES.VarChar, a['42e175da98816fb62ec4ed003dac7a0083c7ecf9']);
     // logged in person
-    request.addParameter('sales_person', TYPES.VarChar, a.person_name);
+    request.addParameter('sales_person', TYPES.VarChar, a.owner_name);
     request.addParameter('status', TYPES.VarChar, a.status);
     request.addParameter('visible_to',TYPES.Int, a.visible_to);
     request.addParameter('pipeline_id',TYPES.Int, a.pipeline_id);
@@ -150,15 +144,8 @@ var doInsert = function (response) {
 
   });
     // setup your columns - always indicate whether the column is nullable
-
     bulk.addColumn('RecID', TYPES.VarChar, { length: 42,nullable: false });
     bulk.addColumn('Title', TYPES.VarChar, { length: 50,nullable: true });
-    //
-    bulk.addColumn('Contact_Number', TYPES.VarChar, { length:255, nullable:true});
-    bulk.addColumn('Address1', TYPES.VarChar, { length:255, nullable:true});
-    bulk.addColumn('Description', TYPES.VarChar, { length:255, nullable:true});
-    bulk.addColumn('Wholesaler', TYPES.VarChar, { length:255, nullable:true});
-    bulk.addColumn('Sales_Person', TYPES.VarChar, { length:255, nullable:true});
     bulk.addColumn('Status', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('Value', TYPES.Int, { nullable: true });
     bulk.addColumn('ID', TYPES.Int, { nullable: true });
@@ -191,7 +178,11 @@ var doInsert = function (response) {
     bulk.addColumn('CC_Email_Address', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('Org_Hidden', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('Person_Hidden', TYPES.VarChar, { length: 50, nullable: true });
-
+    bulk.addColumn('Contact_Number', TYPES.VarChar, { length: 255, nullable:true});
+    bulk.addColumn('Address1', TYPES.VarChar, { length: 255, nullable:true});
+    bulk.addColumn('Description', TYPES.VarChar, { length: 4000, nullable:true});
+    bulk.addColumn('Wholesaler', TYPES.VarChar, { length:255, nullable:true});
+    bulk.addColumn('Sales_Person', TYPES.VarChar, { length:255, nullable:true});
 
   openConnection.on('connect', function(err) {
     if (err) {
@@ -224,8 +215,16 @@ var displayAllDeals = function() {
   // set up the cononection params for the SQl server.
   // registering remote methods
   // go get this record  the first tme or anytime tweet is called
-  client.get(epGetAllDeals, function(data, response) {
-    console.log('data', data.data[0]['933f1418de6c5152026acc29ecb20ccb9c58c1de']);
+  client.get(epGetAllDeals, function(data, res) {
+  var current = data.data;
+  //console.log('datassssxxxxx', current['933f1418de6c5152026acc29ecb20ccb9c58c1de']);
+
+  //console.log('currentxxxxxx',current.stage_id);
+  //current.checkId = current.stage_id;
+console.log(current.length);
+    for (var i = 0; i < current.length; i++) {
+      executeStatementCheck(current[i]);
+    }
   });
 };
 
@@ -234,7 +233,6 @@ var sqlUpdateFunc = function (data, bulk, connection) {
   //console.log(response);
   data = data && data.data || [data];
     // parsed response body as js object
-console.log(data);
     if (data.length) {
       // insert o
       // bit volatile here the two arrays may become out of sync
@@ -255,6 +253,7 @@ console.log(data);
         Wholesaler: datas['42e175da98816fb62ec4ed003dac7a0083c7ecf9'],
         // logged in person
         Email_Messages_Count:datas.email_messages_count,
+        Sales_Person: datas.owner_name,
         Activities_Count:datas.activities_count,
         Undone_Activities:datas.undone_activities_count,
         Reference_Activities:datas.reference_activities_count,
@@ -306,21 +305,21 @@ var server = app.listen(3001, function () {
 var executeStatementCheck = function(a) {
   // console.log(a.data[0].data)
   // console.log('this is a',a.data[0].data.stage_id);
-  console.log('from pipefrive to me===>', a);
-  var id = a.data.current.id;//a.data[0].data.stage_id;
+  console.log('from pipefrive to me===>',a);
+  var id = a.id;//a.data[0].data.stage_id;
   var m = new Connection(config);
-  var sql = 'select * from StagingPipeDrive where Stage_ID ='+a.data.current.stage_id+' and ID = '+id;
+  var sql = 'select * from StagingPipeDrive where Stage_ID ='+a.stage_id+' and ID = '+id;
   var request = new Request(sql, function(err, rowCount, rows) {
     if (err) {
       console.log(err);
     }
     console.log('THERE ARE number of rows',rowCount);
     if (rowCount == 0) {
-      doInsert(a.data.current);
+      doInsert(a);
     }
     if (rowCount > 0) {
       console.log('update performed');
-      doUpdate(a.data.current);
+      doUpdate(a);
     }
 
   });
