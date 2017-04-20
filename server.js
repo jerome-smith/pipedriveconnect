@@ -34,36 +34,36 @@ var doUpdate = function (response) {
 
   var updateSqlString = "UPDATE [StagingPipeDrive] SET Value = @value";
   updateSqlString += ", [Status] = @status";
- updateSqlString += ", CreatedBy ='"+a.person_name+"'";
- updateSqlString += ", CreatedByID ="+a.person_id;
- updateSqlString += ", [Currency]='"+a.currency+"'";
- updateSqlString += ", Add_Time = @stage_change_time";
- updateSqlString += ", Address1 = @address1";
- updateSqlString += ", Contact_Number = @contact_number";
- updateSqlString += ", Description = @description";
- updateSqlString += ", Wholesaler = @wholesaler";
- updateSqlString += ", Sales_Person ='"+a.owner_name+"'";
- updateSqlString += ", Update_Time = @update_time";
- updateSqlString += ", Active ='"+a.active+"'";
- updateSqlString += ", Deleted = '"+a.deleted+"'";
- updateSqlString += ", Next_Activity_Date ='"+a.next_activity_date+"'";
- updateSqlString += ", Next_Activity_ID = @next_activity_id";
- updateSqlString += ", next_activity_note = @next_activity_note";
- updateSqlString += ", Visible_To = @visible_to";
- updateSqlString += ", PipeLine_ID = @pipeline_id";
- updateSqlString += ", Product_Count = @products_count, Title = @title";
- updateSqlString += ", Participants_count = @participants_count";
- updateSqlString += ", Org_Name = '"+a.org_name+"'";
- updateSqlString += ", Expected_Close_Date = '"+a.expected_close_date+"'";
- updateSqlString += ", Org_Hidden = '"+a.org_hidden+"'";
- updateSqlString += ", File_Count = @files_count, Notes_Count = @notes_count, Followers_Count ="+a.followers_count;
- updateSqlString += ", Email_Messages_Count ="+a.email_messages_count+", Activities_Count ="+a.activities_count+", Undone_Activities = "+a.undone_activities_count;
- updateSqlString += " WHERE [Stage_ID] ="+a.stage_id+" AND ID ="+a.id;
-//console.log('updateSqlString',updateSqlString);
-//[Org_Name] = "+a.org_name+",
-//Org_Hidden = "+a.org_hidden+"
-// Title="+a.title+ ",
-  var request = new Request(updateSqlString, function(err, rowCount) {
+   updateSqlString += ", CreatedBy ='"+a.person_name+"'";
+   updateSqlString += ", Currency ='"+a.currency+"'";
+   updateSqlString += ", Add_Time = @stage_change_time";
+   updateSqlString += ", Address1 = @address1";
+   updateSqlString += ", Contact_Number = @contact_number";
+   updateSqlString += ", Description = @description";
+   updateSqlString += ", Wholesaler = @wholesaler";
+   updateSqlString += ", Sales_Person ='"+a.owner_name+"'";
+   updateSqlString += ", Update_Time = @update_time";
+   updateSqlString += ", Active ='"+a.active+"'";
+   updateSqlString += ", Deleted = '"+a.deleted+"'";
+   updateSqlString += ", Next_Activity_Date ='"+a.next_activity_date+"'";
+   updateSqlString += ", Next_Activity_ID = @next_activity_id";
+   updateSqlString += ", Next_Activity_Note ='"+a.next_activity_note+"'";
+   updateSqlString += ", Visible_To = @visible_to";
+   updateSqlString += ", PipeLine_ID = @pipeline_id";
+   updateSqlString += ", Product_Count = @products_count, Title = '"+a.title+"'";
+   updateSqlString += ", Participants_count = @participants_count";
+   updateSqlString += ", Org_Name = '"+a.org_name+"'";
+   updateSqlString += ", Expected_Close_Date = '"+a.expected_close_date+"'";
+   updateSqlString += ", Org_Hidden = '"+a.org_hidden+"'";
+   updateSqlString += ", File_Count = @files_count, Notes_Count = @notes_count";
+   //updateSqlString += ", Followers_Count =@followers_count";
+   updateSqlString += ", Email_Messages_Count =@email_messages_count";
+   updateSqlString += ", Activities_Count =@activities_count";
+   updateSqlString += ", Undone_Activities = @undone_activities_count";
+   updateSqlString += ", CreatedByID = @person_id";
+   updateSqlString += " WHERE [Stage_ID] ="+a.stage_id+" AND ID = "+a.id;
+
+    var request = new Request(updateSqlString, function(err, rowCount) {
     if (err) {
       console.log(err);
       connect.close();
@@ -72,16 +72,19 @@ var doUpdate = function (response) {
     request.addParameter('address1', TYPES.VarChar, a['b78fc4cc8254f2db228253846cd30fd23a3dac4d']);
     request.addParameter('contact_number', TYPES.VarChar, a['933f1418de6c5152026acc29ecb20ccb9c58c1de']);
     request.addParameter('description', TYPES.VarChar, a['0f7e1c54bc74746c8915352223edc1031879bdad']);
-    // LEAD Source
+    request.addParameter('IsSalesLeadCreated', TYPES.Bit, 1);
     request.addParameter('wholesaler', TYPES.VarChar, a['42e175da98816fb62ec4ed003dac7a0083c7ecf9']);
-    // logged in person
     request.addParameter('sales_person', TYPES.VarChar, a.owner_name);
     request.addParameter('status', TYPES.VarChar, a.status);
+    request.addParameter('person_id', TYPES.VarChar, a.person_id);
     request.addParameter('visible_to',TYPES.Int, a.visible_to);
     request.addParameter('pipeline_id',TYPES.Int, a.pipeline_id);
     request.addParameter('next_activity_id', TYPES.Int, a.next_activity_id);
     request.addParameter('products_count',TYPES.Int, a.products_count);
     request.addParameter('files_count', TYPES.Int, a.files_count);
+    request.addParameter('followers_count', TYPES.Int, a.followers_count);
+    request.addParameter('activities_count', TYPES.Int, a.activities_count);
+    request.addParameter('undone_activities_count', TYPES.Int, a.undone_activities_count);
     request.addParameter('stage_order_nr', TYPES.Int, a.stage_order_nr);
     request.addParameter('weighted_value', TYPES.Int, a.weighted_value);
     request.addParameter('notes_count', TYPES.Int, a.notes_count);
@@ -94,7 +97,6 @@ var doUpdate = function (response) {
     request.addParameter('email_messages_count', TYPES.Int, a.email_messages_count);
     request.addParameter('reference_activities_count', TYPES.Int, a.reference_activities_count);
     request.addParameter('stage_id', TYPES.Int, a.stage_id);
-    request.addParameter('followers_count', TYPES.Int, a.followers_count);
     request.addParameter('title', TYPES.VarChar, a.title);
     request.addParameter('currency', TYPES.VarChar, a.currency);
     request.addParameter('active', TYPES.VarChar, a.active);
@@ -113,7 +115,7 @@ var doUpdate = function (response) {
     request.addParameter('next_activity_subject', TYPES.VarChar, a.next_activity_subject);
     request.addParameter('user_id', TYPES.VarChar, a.user_id);
     request.addParameter('person_name', TYPES.VarChar, a.person_name);
- var connect = new Connection(config);
+    var connect = new Connection(config);
     connect.on('connect', function(err) {
     if (err) {
       console.log("Database connection is not established: \n"+err);
@@ -150,14 +152,15 @@ var doInsert = function (response) {
     bulk.addColumn('Value', TYPES.Int, { nullable: true });
     bulk.addColumn('ID', TYPES.Int, { nullable: true });
     bulk.addColumn('Deleted', TYPES.VarChar, { length: 50, nullable: true });
+    bulk.addColumn('IsSalesLeadCreated', TYPES.Bit, { nullable: false });
     bulk.addColumn('PipeLine_ID', TYPES.Int, { nullable: true });
     bulk.addColumn('Currency', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('Add_Time', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('Update_Time', TYPES.VarChar, { length: 50, nullable: true });
-    bulk.addColumn('Followers_Count', TYPES.Int, { nullable: true });
+    //bulk.addColumn('Followers_Count', TYPES.Int, { nullable: true });
     bulk.addColumn('Formatted_Value', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('Weighted_Value', TYPES.Int, { nullable: true });
-    bulk.addColumn('CreatedDateTime', TYPES.VarChar, { length:50, nullable: true });
+    bulk.addColumn('CreatedDateTime', TYPES.DateTime, { nullable: true });
     bulk.addColumn('Expected_Close_Date', TYPES.VarChar, {length: 50, nullable: true });
     bulk.addColumn('Person_Name', TYPES.VarChar, { length:50, nullable: true });
     bulk.addColumn('Active', TYPES.VarChar, { length:50, nullable: true });
@@ -167,7 +170,7 @@ var doInsert = function (response) {
     bulk.addColumn('Reference_Activities', TYPES.Int, { nullable: true});
     bulk.addColumn('Org_Name', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('Next_Activity_Subject', TYPES.VarChar, { length: 50, nullable: true});
-    bulk.addColumn('Next_Activity_Note', TYPES.VarChar, { length: 50, nullable: true});
+    bulk.addColumn('Next_Activity_Note', TYPES.VarChar, { length: 4000, nullable: true});
     bulk.addColumn('Next_Activity_Date', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('Next_Activity_ID', TYPES.Int, { nullable: true });
     bulk.addColumn('Visible_To', TYPES.Int, { nullable: true });
@@ -179,7 +182,7 @@ var doInsert = function (response) {
     bulk.addColumn('Org_Hidden', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('Person_Hidden', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('Contact_Number', TYPES.VarChar, { length: 255, nullable:true});
-    bulk.addColumn('Address1', TYPES.VarChar, { length: 255, nullable:true});
+    bulk.addColumn('Address1', TYPES.VarChar, { length: 4000, nullable:true});
     bulk.addColumn('Description', TYPES.VarChar, { length: 4000, nullable:true});
     bulk.addColumn('Wholesaler', TYPES.VarChar, { length:255, nullable:true});
     bulk.addColumn('Sales_Person', TYPES.VarChar, { length:255, nullable:true});
@@ -196,7 +199,7 @@ var doInsert = function (response) {
   openConnection.on('debug', function(text) {
     console.log('debug',text);
   });
-return openConnection;
+ return openConnection;
 };
 
 var getAllDeals = function() {
@@ -232,9 +235,15 @@ var sqlUpdateFunc = function (data, bulk, connection) {
       // insert o
       // bit volatile here the two arrays may become out of sync
       for (var i = 0; i < data.length; i++) {
-        datas = data[i]
+        datas = data[i];
         uids = uid.v4();
-        bulk.addRow({RecID:uids,Title:datas.title,Status:datas.status,Value:datas.value,Deleted:datas.deleted,Pipeline_ID:datas.pipeline_id,Currency:datas.currency,Add_Time:datas.add_time,
+        bulk.addRow({RecID:uids,
+        Title:datas.title,
+        Status:datas.status,
+        Value:datas.value,
+        Deleted:datas.deleted,
+        Pipeline_ID:datas.pipeline_id,
+        Currency:datas.currency,Add_Time:datas.add_time,
         Update_Time:datas.update_time,
         Stage_ID:datas.stage_id,
         Expected_Close_Date:datas.expected_close_date,
@@ -242,11 +251,9 @@ var sqlUpdateFunc = function (data, bulk, connection) {
         Active:datas.active,
         Contact_Number : datas['933f1418de6c5152026acc29ecb20ccb9c58c1de'],
         Address1: datas['b78fc4cc8254f2db228253846cd30fd23a3dac4d'],
-        Contact_Number: datas['933f1418de6c5152026acc29ecb20ccb9c58c1de'],
         Description: datas['0f7e1c54bc74746c8915352223edc1031879bdad'],
-        // LEAD Source
+        IsSalesLeadCreated : 1,
         Wholesaler: datas['42e175da98816fb62ec4ed003dac7a0083c7ecf9'],
-        // logged in person
         Email_Messages_Count:datas.email_messages_count,
         Sales_Person: datas.owner_name,
         Activities_Count:datas.activities_count,
@@ -265,7 +272,10 @@ var sqlUpdateFunc = function (data, bulk, connection) {
         Org_Hidden:datas.org_hidden,
         Person_Hidden:datas.person_hidden,
         ID:datas.id,
-        Followers_Count:datas.followers_count,Weighted_Value:data[i].weighted_Value,Formatted_Value:data[i].formatted_value});
+        Followers_Count:datas.followers_count,
+        Weighted_Value:datas.weighted_Value,
+        Formatted_Value:datas.formatted_value
+      });
       }
       connection.execBulkLoad(bulk);
     }
@@ -322,6 +332,7 @@ var executeStatementCheck = function(a) {
     if (err) {
       console.log("Database connection is not established: \n"+err);
       process.exit(0);
+
     } else {
       console.log("Connected");  // If no error, then good to proceed.
       m.execSql(request);
@@ -332,5 +343,5 @@ var executeStatementCheck = function(a) {
   });
 };
 // displayAllDeals();
-setInterval(displayAllDeals,200000);
+setInterval(displayAllDeals,300000);
 // add a timer that will run very n minutes until we have hooks sorted.
