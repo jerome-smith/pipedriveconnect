@@ -35,34 +35,36 @@ var doUpdate = function (response) {
 
   var updateSqlString = "UPDATE [StagingPipeDrive] SET Value = @value";
   updateSqlString += ", [Status] = @status";
-   updateSqlString += ", CreatedBy ='"+a.person_name+"'";
-   updateSqlString += ", Currency ='"+a.currency+"'";
+   updateSqlString += ", CreatedBy =@person_name";
+   updateSqlString += ", Currency =@currency";
    updateSqlString += ", Add_Time = @stage_change_time";
    updateSqlString += ", Address1 = @address1";
    updateSqlString += ", Contact_Number = @contact_number";
    updateSqlString += ", Description = @description";
    updateSqlString += ", Wholesaler = @wholesaler";
-   updateSqlString += ", Sales_Person ='"+a.owner_name+"'";
+   updateSqlString += ", Sales_Person =@owner_name";
    updateSqlString += ", Update_Time = @update_time";
-   updateSqlString += ", Active ='"+a.active+"'";
-   updateSqlString += ", Deleted = '"+a.deleted+"'";
-   updateSqlString += ", Next_Activity_Date ='"+a.next_activity_date+"'";
+   updateSqlString += ", Active = @active";
+   updateSqlString += ", Deleted = @deleted";
+   updateSqlString += ", Next_Activity_Date =@next_activity_date";
    updateSqlString += ", Next_Activity_ID = @next_activity_id";
-   updateSqlString += ", Next_Activity_Note ='"+a.next_activity_note+"'";
+   updateSqlString += ", Next_Activity_Note =@next_activity_note";
    updateSqlString += ", Visible_To = @visible_to";
    updateSqlString += ", PipeLine_ID = @pipeline_id";
-   updateSqlString += ", Product_Count = @products_count, Title = '"+a.title+"'";
+   updateSqlString += ", Product_Count = @products_count";
+   updateSqlString += ", Title = @title";
    updateSqlString += ", Participants_count = @participants_count";
-   updateSqlString += ", Org_Name = '"+a.org_name+"'";
-   updateSqlString += ", Expected_Close_Date = '"+a.expected_close_date+"'";
-   updateSqlString += ", Org_Hidden = '"+a.org_hidden+"'";
-   updateSqlString += ", File_Count = @files_count, Notes_Count = @notes_count";
-   //updateSqlString += ", Followers_Count =@followers_count";
+   updateSqlString += ", Org_Name = @org_name";
+   updateSqlString += ", Expected_Close_Date = @expected_close_date";
+   updateSqlString += ", Org_Hidden = @org_hidden";
+   updateSqlString += ", File_Count = @files_count";
+   updateSqlString += ", Notes_Count = @notes_count";
    updateSqlString += ", Email_Messages_Count =@email_messages_count";
    updateSqlString += ", Activities_Count =@activities_count";
    updateSqlString += ", Undone_Activities = @undone_activities_count";
    updateSqlString += ", CreatedByID = @person_id";
-   updateSqlString += " WHERE [Stage_ID] ="+a.stage_id+" AND ID = "+a.id;
+   updateSqlString += " WHERE [Stage_ID] =@stage_id";
+   updateSqlString += " AND ID =@id";
 
     var request = new Request(updateSqlString, function(err, rowCount) {
     if (err) {
