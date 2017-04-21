@@ -17,7 +17,8 @@ var app = express();
 var bpurle= bp.urlencoded({ extended: false });
 var bpjson= bp.json();
 // live token
-var api_token="ec1117c1aa20956fba177bfb72bcd875a9da3dc1";
+var api_token="b55efbe639cdfe2e3d8d5ddb6f5918ea2711ff12";
+//"ec1117c1aa20956fba177bfb72bcd875a9da3dc1";
 var epGetAllDeals = "https://api.pipedrive.com/v1/deals?start=0&api_token="+api_token;
 
 
