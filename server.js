@@ -72,7 +72,6 @@ var doUpdate = function (response) {
     request.addParameter('address1', TYPES.VarChar, a['b78fc4cc8254f2db228253846cd30fd23a3dac4d']);
     request.addParameter('contact_number', TYPES.VarChar, a['933f1418de6c5152026acc29ecb20ccb9c58c1de']);
     request.addParameter('description', TYPES.VarChar, a['0f7e1c54bc74746c8915352223edc1031879bdad']);
-    request.addParameter('IsSalesLeadCreated', TYPES.Bit, 1);
     request.addParameter('wholesaler', TYPES.VarChar, a['42e175da98816fb62ec4ed003dac7a0083c7ecf9']);
     request.addParameter('sales_person', TYPES.VarChar, a.owner_name);
     request.addParameter('status', TYPES.VarChar, a.status);
@@ -152,12 +151,10 @@ var doInsert = function (response) {
     bulk.addColumn('Value', TYPES.Int, { nullable: true });
     bulk.addColumn('ID', TYPES.Int, { nullable: true });
     bulk.addColumn('Deleted', TYPES.VarChar, { length: 50, nullable: true });
-    bulk.addColumn('IsSalesLeadCreated', TYPES.Bit, { nullable: false });
     bulk.addColumn('PipeLine_ID', TYPES.Int, { nullable: true });
     bulk.addColumn('Currency', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('Add_Time', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('Update_Time', TYPES.VarChar, { length: 50, nullable: true });
-    //bulk.addColumn('Followers_Count', TYPES.Int, { nullable: true });
     bulk.addColumn('Formatted_Value', TYPES.VarChar, { length: 50, nullable: true });
     bulk.addColumn('Weighted_Value', TYPES.Int, { nullable: true });
     bulk.addColumn('CreatedDateTime', TYPES.DateTime, { nullable: true });
@@ -252,7 +249,6 @@ var sqlUpdateFunc = function (data, bulk, connection) {
         Contact_Number : datas['933f1418de6c5152026acc29ecb20ccb9c58c1de'],
         Address1: datas['b78fc4cc8254f2db228253846cd30fd23a3dac4d'],
         Description: datas['0f7e1c54bc74746c8915352223edc1031879bdad'],
-        IsSalesLeadCreated : 1,
         Wholesaler: datas['42e175da98816fb62ec4ed003dac7a0083c7ecf9'],
         Email_Messages_Count:datas.email_messages_count,
         Sales_Person: datas.owner_name,
