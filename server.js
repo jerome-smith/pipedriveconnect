@@ -8,7 +8,9 @@ var config = {
   password:"Superman21",
   server:"41.77.101.146",
   options: {
-    database: 'Cherwell_DEV'
+    database: 'Cherwell_DEV',
+    useColumnNames: true,
+    rowCollectionOnRequestCompletion:true
   }
 };
 var express = require("express");
@@ -17,9 +19,11 @@ var app = express();
 var bpurle= bp.urlencoded({ extended: false });
 var bpjson= bp.json();
 // live token
-var api_token="b55efbe639cdfe2e3d8d5ddb6f5918ea2711ff12";
-//"ec1117c1aa20956fba177bfb72bcd875a9da3dc1";
-var epGetAllDeals = "https://api.pipedrive.com/v1/deals?start=0&api_token="+api_token;
+var api_token="fca4760578d7919824bb9efc99ce0c6275d1c54b";
+// "b55efbe639cdfe2e3d8d5ddb6f5918ea2711ff12";
+// "b55efbe639cdfe2e3d8d5ddb6f5918ea2711ff12";
+// "ec1117c1aa20956fba177bfb72bcd875a9da3dc1";
+var epGetAllDeals = "https://api.pipedrive.com/v1/deals?start=0&limit=100&api_token="+api_token;
 
 
 
@@ -72,10 +76,10 @@ var doUpdate = function (response) {
       connect.close();
     }
   });
-    request.addParameter('address1', TYPES.VarChar, a['b78fc4cc8254f2db228253846cd30fd23a3dac4d']);
-    request.addParameter('contact_number', TYPES.VarChar, a['933f1418de6c5152026acc29ecb20ccb9c58c1de']);
-    request.addParameter('description', TYPES.VarChar, a['0f7e1c54bc74746c8915352223edc1031879bdad']);
-    request.addParameter('wholesaler', TYPES.VarChar, a['42e175da98816fb62ec4ed003dac7a0083c7ecf9']);
+    // request.addParameter('address1', TYPES.VarChar, a['b78fc4cc8254f2db228253846cd30fd23a3dac4d']);
+    // request.addParameter('contact_number', TYPES.VarChar, a['933f1418de6c5152026acc29ecb20ccb9c58c1de']);
+    // request.addParameter('description', TYPES.VarChar, a['0f7e1c54bc74746c8915352223edc1031879bdad']);
+    // request.addParameter('wholesaler', TYPES.VarChar, a['42e175da98816fb62ec4ed003dac7a0083c7ecf9']);
     request.addParameter('sales_person', TYPES.VarChar, a.owner_name);
     request.addParameter('status', TYPES.VarChar, a.status);
     request.addParameter('person_id', TYPES.VarChar, a.person_id);
@@ -209,6 +213,7 @@ var getAllDeals = function() {
   // set up the cononection params for the SQl server.
   // registering remote methods
   // go get this record  the first tme or anytime tweet is called
+
   client.registerMethod("jsonMethod", epGetAllDeals, "GET");
   // prep the statement
   client.methods.jsonMethod(sqlUpdateFunc);
@@ -219,9 +224,17 @@ var displayAllDeals = function() {
   // registering remote methods
   // go get this record  the first tme or anytime tweet is called
   client.get(epGetAllDeals, function(data, res) {
-    var current = data.data;
+    console.log(data);
+    var current = data.data, start;
+    dataPag = data.additional_data.pagination;
+
     for (var i = 0; i < current.length; i++) {
       executeStatementCheck(current[i]);
+    }
+    if (dataPag.more_items_in_collection) {
+      start = dataPag.next_start;
+      epGetAllDeals = "https://api.pipedrive.com/v1/deals?start="+start+"&limit=100&api_token="+api_token;
+      displayAllDeals();
     }
   });
 };
@@ -306,6 +319,45 @@ var server = app.listen(3001, function () {
   console.log("Connection listening at http://%s:%s", host, port);
 });
 
+var updatePipeDrive = function (a) {
+  var client = new Client();
+  var md = new Connection(config);
+  var sql = 'select * from StagingPipeDriveValueWrite';
+
+  var request = new Request(sql, function(err, rowCount, rows) {
+    if (err) {
+      console.log(err);
+    }
+    console.log('Pipedrive needs to be updated:',rowCount);
+  });
+  request.on('row', function (rowCount, more, rows) {
+    var args = {
+      path: {id:rowCount.Id.value},
+      data : {
+        'value' : rowCount.OwnedBy.value,
+        'id': rowCount.Id.value
+      },
+      headers: { "Content-Type": "application/json" }
+    };
+    client.put("https://api.pipedrive.com/v1/deals/${id}?api_token="+api_token, args, function(d){
+      console.log(d);
+    });
+  });
+  md.on('connect', function(err) {
+    if (err) {
+      console.log("Database connection is not established: \n"+err);
+      process.exit(0);
+
+    } else {
+      console.log("Connected");  // If no error, then good to proceed.
+      md.execSql(request);
+    }
+  });
+  md.on('debug', function(text) {
+    console.log('debug',text);
+  });
+}
+
 var executeStatementCheck = function(a) {
   // console.log(a.data[0].data)
   // console.log('this is a',a.data[0].data.stage_id);
@@ -327,7 +379,7 @@ var executeStatementCheck = function(a) {
       doUpdate(a);
     }
   });
-    m.on('connect', function(err) {
+  m.on('connect', function(err) {
     if (err) {
       console.log("Database connection is not established: \n"+err);
       process.exit(0);
@@ -341,6 +393,6 @@ var executeStatementCheck = function(a) {
     console.log('debug',text);
   });
 };
-// displayAllDeals();
-setInterval(displayAllDeals,300000);
+updatePipeDrive();
+// setInterval(displayAllDeals,300000);
 // add a timer that will run very n minutes until we have hooks sorted.
