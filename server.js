@@ -332,10 +332,10 @@ var updatePipeDrive = function (a) {
   });
   request.on('row', function (rowCount, more, rows) {
     var args = {
-      path: {id:rowCount.Id.value},
+      path: {id:rowCount.ID.value},
       data : {
-        'value' : rowCount.OwnedBy.value,
-        'id': rowCount.Id.value
+        'value' : rowCount.Value.value,
+        'id': rowCount.ID.value
       },
       headers: { "Content-Type": "application/json" }
     };
@@ -393,6 +393,6 @@ var executeStatementCheck = function(a) {
     console.log('debug',text);
   });
 };
-updatePipeDrive();
+setInterval(updatePipeDrive,300000);
 // setInterval(displayAllDeals,300000);
 // add a timer that will run very n minutes until we have hooks sorted.
