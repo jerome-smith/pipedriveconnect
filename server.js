@@ -228,7 +228,7 @@ var displayAllDeals = function() {
     var current = data.data, start;
     dataPag = data.additional_data.pagination;
 
-    for (var i = 0; i < 2; i++) {
+    for (var i = 0; i < current.length; i++) {
       executeStatementCheck(current[i]);
     }
     if (dataPag.more_items_in_collection) {
@@ -395,7 +395,7 @@ var executeStatementCheck = function(a) {
   });
 };
 // updatePipeDrive();
-// displayAllDeals();
+displayAllDeals();
 setInterval(updatePipeDrive,300000);
-// setInterval(displayAllDeals,300000);
+setInterval(displayAllDeals,300000);
 // add a timer that will run very n minutes until we have hooks sorted.
