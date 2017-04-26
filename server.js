@@ -42,10 +42,10 @@ var doUpdate = function (response) {
    updateSqlString += ", CreatedBy =@person_name";
    updateSqlString += ", Currency =@currency";
    updateSqlString += ", Add_Time = @stage_change_time";
-   updateSqlString += ", Address1 = @address1";
-   updateSqlString += ", Contact_Number = @contact_number";
-   updateSqlString += ", Description = @description";
-   updateSqlString += ", Wholesaler = @wholesaler";
+   //updateSqlString += ", Address1 = @address1";
+   //updateSqlString += ", Contact_Number = @contact_number";
+   //updateSqlString += ", Description = @description";
+   //updateSqlString += ", Wholesaler = @wholesaler";
    updateSqlString += ", Sales_Person =@owner_name";
    updateSqlString += ", Update_Time = @update_time";
    updateSqlString += ", Active = @active";
@@ -228,7 +228,7 @@ var displayAllDeals = function() {
     var current = data.data, start;
     dataPag = data.additional_data.pagination;
 
-    for (var i = 0; i < current.length; i++) {
+    for (var i = 0; i < 2; i++) {
       executeStatementCheck(current[i]);
     }
     if (dataPag.more_items_in_collection) {
@@ -312,6 +312,7 @@ app.post('/v1/deals', bpjson, function (req, res) {
   executeStatementCheck(response);
 });
 
+
 // run the server on port 3001
 var server = app.listen(3001, function () {
   var host = server.address().address;
@@ -359,7 +360,7 @@ var updatePipeDrive = function (a) {
 }
 
 var executeStatementCheck = function(a) {
-  // console.log(a.data[0].data)
+  console.log(a);
   // console.log('this is a',a.data[0].data.stage_id);
   console.log('from pipefrive to me===>',a);
   var id = a.id;//a.data[0].data.stage_id;
@@ -393,6 +394,8 @@ var executeStatementCheck = function(a) {
     console.log('debug',text);
   });
 };
+// updatePipeDrive();
+// displayAllDeals();
 setInterval(updatePipeDrive,300000);
 // setInterval(displayAllDeals,300000);
 // add a timer that will run very n minutes until we have hooks sorted.
