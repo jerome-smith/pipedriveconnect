@@ -20,9 +20,6 @@ var bpurle= bp.urlencoded({ extended: false });
 var bpjson= bp.json();
 // live token
 var api_token="b55efbe639cdfe2e3d8d5ddb6f5918ea2711ff12";
-// "b55efbe639cdfe2e3d8d5ddb6f5918ea2711ff12";
-// "b55efbe639cdfe2e3d8d5ddb6f5918ea2711ff12";
-// "ec1117c1aa20956fba177bfb72bcd875a9da3dc1";
 var epGetAllDeals = "https://api.pipedrive.com/v1/deals?start=0&limit=100&api_token="+api_token;
 
 
@@ -32,11 +29,9 @@ var dataStatements = [], dataIds = [], connection, bulk;
 var openConnection = function () {
   return new Connection(config);
 };
-
+// DB update
 var doUpdate = function (response) {
   var a  = response;
-  //console.log('THIS DATA', a.stage_id);
-
   var updateSqlString = "UPDATE [StagingPipeDrive] SET Value = @value";
    updateSqlString += ", [Status] = @status";
    updateSqlString += ", CreatedBy =@person_name";
@@ -136,7 +131,7 @@ var doUpdate = function (response) {
   });
 
 };
-
+// bulk insert
 var doInsert = function (response) {
   var openConnection = new Connection(config);
 
@@ -205,24 +200,16 @@ var doInsert = function (response) {
   });
  return openConnection;
 };
-
+// all deals
 var getAllDeals = function() {
   var client = new Client();
-  var api_token="57b74e6b339618a479a77d5e8c722f384a4c9887";
-
-  // set up the cononection params for the SQl server.
-  // registering remote methods
-  // go get this record  the first tme or anytime tweet is called
-
   client.registerMethod("jsonMethod", epGetAllDeals, "GET");
   // prep the statement
   client.methods.jsonMethod(sqlUpdateFunc);
 };
+// all deals
 var displayAllDeals = function() {
   var client = new Client();
-  // set up the cononection params for the SQl server.
-  // registering remote methods
-  // go get this record  the first tme or anytime tweet is called
   client.get(epGetAllDeals, function(data, res) {
     console.log(data);
     var current = data.data, start;
@@ -241,12 +228,9 @@ var displayAllDeals = function() {
 
 var sqlUpdateFunc = function (data, bulk, connection) {
   var cols, vals, dateTime = new Date(), uids;
-  //console.log(response);
   data = data && data.data || [data];
     // parsed response body as js object
     if (data.length) {
-      // insert o
-      // bit volatile here the two arrays may become out of sync
       for (var i = 0; i < data.length; i++) {
         datas = data[i];
         uids = uid.v4();
@@ -360,9 +344,6 @@ var updatePipeDrive = function (a) {
 }
 
 var executeStatementCheck = function(a) {
-  console.log(a);
-  // console.log('this is a',a.data[0].data.stage_id);
-  console.log('from pipefrive to me===>',a);
   var id = a.id;//a.data[0].data.stage_id;
   var m = new Connection(config);
   // checks each record if it exists if it does then insert else update the record
@@ -394,8 +375,8 @@ var executeStatementCheck = function(a) {
     console.log('debug',text);
   });
 };
-// updatePipeDrive();
+
 displayAllDeals();
 setInterval(updatePipeDrive,300000);
 setInterval(displayAllDeals,300000);
-// add a timer that will run very n minutes until we have hooks sorted.
+
