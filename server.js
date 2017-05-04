@@ -19,7 +19,7 @@ var app = express();
 var bpurle= bp.urlencoded({ extended: false });
 var bpjson= bp.json();
 // live token
-var api_token="fca4760578d7919824bb9efc99ce0c6275d1c54b";
+var api_token="b55efbe639cdfe2e3d8d5ddb6f5918ea2711ff12";
 // "b55efbe639cdfe2e3d8d5ddb6f5918ea2711ff12";
 // "b55efbe639cdfe2e3d8d5ddb6f5918ea2711ff12";
 // "ec1117c1aa20956fba177bfb72bcd875a9da3dc1";
@@ -38,14 +38,14 @@ var doUpdate = function (response) {
   //console.log('THIS DATA', a.stage_id);
 
   var updateSqlString = "UPDATE [StagingPipeDrive] SET Value = @value";
-  updateSqlString += ", [Status] = @status";
+   updateSqlString += ", [Status] = @status";
    updateSqlString += ", CreatedBy =@person_name";
    updateSqlString += ", Currency =@currency";
    updateSqlString += ", Add_Time = @stage_change_time";
-   //updateSqlString += ", Address1 = @address1";
-   //updateSqlString += ", Contact_Number = @contact_number";
-   //updateSqlString += ", Description = @description";
-   //updateSqlString += ", Wholesaler = @wholesaler";
+   updateSqlString += ", Address1 = @address1";
+   updateSqlString += ", Contact_Number = @contact_number";
+   updateSqlString += ", Description = @description";
+   updateSqlString += ", Wholesaler = @wholesaler";
    updateSqlString += ", Sales_Person =@owner_name";
    updateSqlString += ", Update_Time = @update_time";
    updateSqlString += ", Active = @active";
@@ -76,10 +76,10 @@ var doUpdate = function (response) {
       connect.close();
     }
   });
-    // request.addParameter('address1', TYPES.VarChar, a['b78fc4cc8254f2db228253846cd30fd23a3dac4d']);
-    // request.addParameter('contact_number', TYPES.VarChar, a['933f1418de6c5152026acc29ecb20ccb9c58c1de']);
-    // request.addParameter('description', TYPES.VarChar, a['0f7e1c54bc74746c8915352223edc1031879bdad']);
-    // request.addParameter('wholesaler', TYPES.VarChar, a['42e175da98816fb62ec4ed003dac7a0083c7ecf9']);
+    request.addParameter('address1', TYPES.VarChar, a['b78fc4cc8254f2db228253846cd30fd23a3dac4d']);
+    request.addParameter('contact_number', TYPES.VarChar, a['933f1418de6c5152026acc29ecb20ccb9c58c1de']);
+    request.addParameter('description', TYPES.VarChar, a['0f7e1c54bc74746c8915352223edc1031879bdad']);
+    request.addParameter('wholesaler', TYPES.VarChar, a['42e175da98816fb62ec4ed003dac7a0083c7ecf9']);
     request.addParameter('sales_person', TYPES.VarChar, a.owner_name);
     request.addParameter('status', TYPES.VarChar, a.status);
     request.addParameter('person_id', TYPES.VarChar, a.person_id);
@@ -262,10 +262,10 @@ var sqlUpdateFunc = function (data, bulk, connection) {
         Expected_Close_Date:datas.expected_close_date,
         Person_Name:datas.person_name,
         Active:datas.active,
-        // Contact_Number : datas['933f1418de6c5152026acc29ecb20ccb9c58c1de'],
-        // Address1: datas['b78fc4cc8254f2db228253846cd30fd23a3dac4d'],
-        // Description: datas['0f7e1c54bc74746c8915352223edc1031879bdad'],
-        // Wholesaler: datas['42e175da98816fb62ec4ed003dac7a0083c7ecf9'],
+        Contact_Number : datas['933f1418de6c5152026acc29ecb20ccb9c58c1de'],
+        Address1: datas['b78fc4cc8254f2db228253846cd30fd23a3dac4d'],
+        Description: datas['0f7e1c54bc74746c8915352223edc1031879bdad'],
+        Wholesaler: datas['42e175da98816fb62ec4ed003dac7a0083c7ecf9'],
         Email_Messages_Count:datas.email_messages_count,
         Sales_Person: datas.owner_name,
         Activities_Count:datas.activities_count,
