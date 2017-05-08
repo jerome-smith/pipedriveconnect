@@ -3,10 +3,21 @@ var Connection = require('tedious').Connection;
 var Request = require('tedious').Request;
 var TYPES = require('tedious').TYPES;
 var uid = require('node-uuid');
+
+// RDP Host: cherwell-dev.iconnecttelecoms.com
+// Username: jeromes
+// Password Never_Look_Back
+
+// SQL Backup:  192.168.2.105
+// Database: Cherwell_Dev
+// SQL instance: None
+// User: SVC_CherwellAPI
+// Password: Never_Look_Back
+// Rights: DBO
 var config = {
-  userName:"Cherwell_dev",
-  password:"Superman21",
-  server:"41.77.101.146",
+  userName:"SVC_CherwellAPI",
+  password:"Never_Look_Back",
+  server:"192.168.2.105",
   options: {
     database: 'Cherwell_DEV',
     useColumnNames: true,
@@ -18,7 +29,7 @@ var bp = require("body-parser");
 var app = express();
 var bpurle= bp.urlencoded({ extended: false });
 var bpjson= bp.json();
-// live token
+// Marius change this token when you are changing acoounts
 var api_token="b55efbe639cdfe2e3d8d5ddb6f5918ea2711ff12";
 var epGetAllDeals = "https://api.pipedrive.com/v1/deals?start=0&limit=100&api_token="+api_token;
 
@@ -207,7 +218,7 @@ var getAllDeals = function() {
   // prep the statement
   client.methods.jsonMethod(sqlUpdateFunc);
 };
-// all deals
+// all deals and page through the deals
 var displayAllDeals = function() {
   var client = new Client();
   client.get(epGetAllDeals, function(data, res) {
