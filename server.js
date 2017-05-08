@@ -19,7 +19,7 @@ var config = {
   password:"Never_Look_Back",
   server:"192.168.2.105",
   options: {
-    database: 'Cherwell_DEV',
+    database: 'Cherwell_Dev',
     useColumnNames: true,
     rowCollectionOnRequestCompletion:true
   }
