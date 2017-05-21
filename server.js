@@ -14,9 +14,12 @@ var uid = require('node-uuid');
 // User: SVC_CherwellAPI
 // Password: Never_Look_Back
 // Rights: DBO
+
+
+
 var config = {
-  userName:"SVC_CherwellAPI",
-  password:"Never_Look_Back",
+  userName:"Svc_cherwelluat",
+  password:"S$7v87#$",
   server:"192.168.2.105",
   options: {
     database: 'Cherwell_Dev',
