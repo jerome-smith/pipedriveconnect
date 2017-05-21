@@ -4,25 +4,12 @@ var Request = require('tedious').Request;
 var TYPES = require('tedious').TYPES;
 var uid = require('node-uuid');
 
-// RDP Host: cherwell-dev.iconnecttelecoms.com
-// Username: jeromes
-// Password Never_Look_Back
-
-// SQL Backup:  192.168.2.105
-// Database: Cherwell_Dev
-// SQL instance: None
-// User: SVC_CherwellAPI
-// Password: Never_Look_Back
-// Rights: DBO
-
-
-
 var config = {
   userName:"Svc_cherwelluat",
-  password:"S$7v87#$",
+  password:"Sn0wwhit3",
   server:"192.168.2.105",
   options: {
-    database: 'Cherwell_Dev',
+    database: 'Cherwell_uat',
     useColumnNames: true,
     rowCollectionOnRequestCompletion:true
   }
