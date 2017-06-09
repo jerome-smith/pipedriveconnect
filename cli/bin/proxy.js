@@ -80,7 +80,7 @@ function startProxy (aReqHandlersArr) {
     // in 'api mode' a proxy is started on port 8001 and all requests for static
     // content are routed to a http server running on port 8000. all api
     // requests are sent to the api on port 80. A second http server is started
-    // on port 8000 and deals with running selenium tests.
+
     var proxy = httpProxy.createProxyServer({});
 
     http.createServer(function (req, res) {
@@ -93,7 +93,7 @@ function startProxy (aReqHandlersArr) {
 
         proxy.web(req, res, {
           target : {
-            host : gc.apiHost, // app.dev.tagcmd.com
+            host : gc.apiHost, // app.dev.com
             port : gc.api // port 80
           }
         });
@@ -181,9 +181,6 @@ fiapp.cmd('home(.*)?', function() {
   }
 
   fiapp.log.info(('Starting in home mode. Proxying to ' + ip + ':' + gc.proxySvr1).green);
-  global.homeMode = true;
-  global.mrmMode = true;
-  global.damMode = true;
   global.remoteProxyIp = ip;
   startProxy(pathsArr);
 });

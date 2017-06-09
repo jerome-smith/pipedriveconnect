@@ -4,12 +4,14 @@ var Request = require('tedious').Request;
 var TYPES = require('tedious').TYPES;
 var uid = require('node-uuid');
 
+
+//SVC_CherwellApi
 var config = {
-  userName:"Svc_cherwelluat",
+  userName:"SVC_CherwellApi",
   password:"Sn0wwhit3",
   server:"192.168.2.105",
   options: {
-    database: 'Cherwell_uat',
+    database: 'Cherwell_Api',
     useColumnNames: true,
     rowCollectionOnRequestCompletion:true
   }
@@ -378,6 +380,6 @@ var executeStatementCheck = function(a) {
 };
 
 displayAllDeals();
-setInterval(updatePipeDrive,300000);
+
 setInterval(displayAllDeals,300000);
 
