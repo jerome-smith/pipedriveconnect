@@ -7,11 +7,11 @@ var uid = require('node-uuid');
 
 //SVC_CherwellApi
 var config = {
-  userName:"SVC_CherwellApi",
+  userName:"svc_cherwellprod",
   password:"Sn0wwhit3",
   server:"192.168.2.105",
   options: {
-    database: 'Cherwell_Api',
+    database: 'Cherwell_Prod',
     useColumnNames: true,
     rowCollectionOnRequestCompletion:true
   }
